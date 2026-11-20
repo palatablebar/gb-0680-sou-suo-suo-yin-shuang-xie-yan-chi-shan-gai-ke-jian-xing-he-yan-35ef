@@ -13,10 +13,19 @@ from app.modules.m6_parity.rules import evaluate as stage6
 from app.modules.m7_backfills.rules import evaluate as stage7
 STAGES=[stage1,stage2,stage3,stage4,stage5,stage6,stage7]
 def load_sample(name):
-    if name not in {"dirty.csv","clean.csv","legacy.csv"}: raise DomainError("BAD_SAMPLE","样例不存在",404)
+    if name not in {"dirty.csv","clean.csv","legacy.csv","tenant.csv"}: raise DomainError("BAD_SAMPLE","样例不存在",404)
     return (ROOT/"sample_data"/name).read_bytes()
+def normalize(params):
+    params=dict(params or {})
+    if "tenant_scope" in params:
+        scope=params["tenant_scope"]
+        if not isinstance(scope,list) or any(not isinstance(t,str) or not t.strip() for t in scope): raise DomainError("BAD_PARAMETERS","tenant_scope需要非空字符串列表")
+        scope=sorted({t.strip() for t in scope})
+        if scope: params["tenant_scope"]=scope
+        else: params.pop("tenant_scope")
+    return params
 def calculate(raw,params=None,stop=6):
-    params=params or {};started=time.monotonic();context={"parameters":params,"raw":raw,"quarantine":[]};stages=[];rows=[]
+    params=normalize(params);started=time.monotonic();context={"parameters":params,"raw":raw,"quarantine":[]};stages=[];rows=[]
     for index,stage in enumerate(STAGES[:stop+1]):
         result=stage(raw if index==0 else rows,context)
         result=scalar(result);rows=result["rows"]

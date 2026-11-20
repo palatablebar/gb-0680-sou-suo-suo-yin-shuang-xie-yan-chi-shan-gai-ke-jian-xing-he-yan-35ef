@@ -31,6 +31,10 @@
 | TRAP-09 | 超大版本 | JSON精度损失 | 文本序列化 | `app/values.py` | `tests/test_m2.py::test_large_version_precise` |
 | TRAP-13 | 删除后迟到旧写 | 文档复活 | 最大版本墓碑 | `app/modules/m3_versions/rules.py` | `tests/test_m3.py::test_tombstone_beats_late_old_write` |
 | TRAP-23 | 延迟阈值边界 | 多判延迟 | 等于阈值通过 | `app/modules/m5_latency/rules.py` | `tests/test_m5.py::test_threshold_equal_pass` |
+| TRAP-27 | 同号跨租户 | 误判同文档冲突或串租户合并 | 业务键=租户+文档号 | `app/modules/m3_versions/rules.py` | `tests/test_tenant.py::test_same_doc_id_distinct_tenants_no_conflict` |
+| TRAP-28 | 缺租户归属 | 猜配到既有租户 | 隔离且不进正式结论 | `app/modules/m2_schema/rules.py` | `tests/test_tenant.py::test_missing_tenant_quarantined_not_guessed` |
+| TRAP-29 | 范围外租户 | 混入本次切换结论 | 按声明范围隔离 | `app/modules/m2_schema/rules.py` | `tests/test_tenant.py::test_out_of_scope_quarantined` |
+| TRAP-30 | 范围参数乱序 | 重跑产生新批次 | 规范化后再算摘要 | `app/pipeline.py` | `tests/test_tenant.py::test_scope_order_same_run` |
 
 ## 对账规则
 

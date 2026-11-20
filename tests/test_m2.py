@@ -14,9 +14,9 @@ def test_fullwidth_version():
     "TRAP-06"
     assert number("１２")==Decimal(12)
 def test_negative_latency_rejected():
-    row={"version":"1","op":"delete","side":"index","source_time":"2026-11-16T10:00:00Z","visible_time":"2026-11-16T09:59:00Z","reported":"1"}
+    row={"tenant_id":"t1","version":"1","op":"delete","side":"index","source_time":"2026-11-16T10:00:00Z","visible_time":"2026-11-16T09:59:00Z","reported":"1"}
     assert evaluate([row],{})["quarantine"][0]["reason"]=="NEGATIVE_LATENCY"
 
 def test_integral_version_spelling_canonicalized():
-    row={"event_id":"a","doc_id":"1","version":"1.0","op":"delete","side":"source","source_time":"2026-11-16T10:00:00Z","visible_time":"-","reported":"1"}
+    row={"event_id":"a","tenant_id":"t1","doc_id":"1","version":"1.0","op":"delete","side":"source","source_time":"2026-11-16T10:00:00Z","visible_time":"-","reported":"1"}
     assert evaluate([row],{})["rows"][0]["version"]=="1"

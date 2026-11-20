@@ -23,7 +23,7 @@ docker compose exec -T app pytest -q
 
 ## 核心规则
 
-按源版本重建目标可见状态，删除墓碑拦截迟到旧写入；延迟与缺失分开定责。
+按源版本重建目标可见状态，删除墓碑拦截迟到旧写入；延迟与缺失分开定责。多租户接入后业务键为租户+文档号：缺租户归属的旧记录一律隔离不猜配，声明范围外的租户不进入本次切换结论，同一文档号在不同租户各自裁决。
 
 ## 演示
 
@@ -34,9 +34,9 @@ docker compose exec -T app pytest -q
 
 ## 输入与输出
 
-输入列见 `docs/DATA-DICTIONARY.md`。项目包含dirty.csv、clean.csv、legacy.csv，统一走实际导入路径。上传限制4MB，拒绝不带时区的时间。业务键按字符串保留，Decimal参与计算，空值不会当零。
+输入列见 `docs/DATA-DICTIONARY.md`。项目包含dirty.csv、clean.csv、legacy.csv、tenant.csv，统一走实际导入路径。上传限制4MB，拒绝不带时区的时间。业务键按字符串保留，Decimal参与计算，空值不会当零。
 
-`POST /api/runs` 接收sample或csv；`GET /api/runs`返回历史批次；`POST /api/runs/<id>/review`需要version与decision；`GET /api/runs/<id>/archive`返回唯一证据导出。
+`POST /api/runs` 接收sample或csv，可用parameters.tenant_scope声明本次切换的租户范围；`GET /api/runs`返回历史批次；`POST /api/runs/<id>/review`需要version与decision；`GET /api/runs/<id>/archive`返回唯一证据导出，含tenant_id列与tenant_scope行，与页面读取同一批次。
 
 ## 范围
 
